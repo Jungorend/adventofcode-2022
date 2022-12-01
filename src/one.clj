@@ -28,3 +28,10 @@
      elf-totals
      (sort >)
      first)
+
+;; Part Two, just need to add together the three
+(->> (elves input)
+     elf-totals
+     (sort >)
+     (take 3)
+     (apply +))
