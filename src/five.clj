@@ -47,3 +47,20 @@
   (let [input (read-input)
         cargo (txt->cargo (first input))]
     (display-top-crates (reduce #(update-cargo %2 %1) cargo (s/split (second input) #"\n")))))
+
+;; Part Two
+;; Identical to one except I took out the earlier reverse function
+(defn update-cargo-two
+  [line cargo]
+  (let [regex (re-find #"move (\d+) from (\d+) to (\d+)" line)
+        [amount from to] (map #(Integer/parseInt %) (rest regex))
+        crates-to-move (apply vector (take amount (nth cargo (dec from))))]
+    (-> cargo
+        (update (dec from) #(drop amount %))
+        (update (dec to) #(apply conj crates-to-move %)))))
+
+(defn part-two
+  []
+  (let [input (read-input)
+        cargo (txt->cargo (first input))]
+    (display-top-crates (reduce #(update-cargo-two %2 %1) cargo (s/split (second input) #"\n")))))
