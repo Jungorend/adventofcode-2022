@@ -24,8 +24,26 @@
 (defn txt->cargo
   [txt]
   (let [s (drop-last (s/split txt #"\n"))
-        c (take (count (normalize-values (first s))) (repeat []))]
+        c (take (count (normalize-values (last s))) (repeat []))]
     (reduce (fn [cargo line] (push-line (normalize-values line) cargo))
             c s)))
 
-(txt->cargo (first (read-input)))
+(defn display-top-crates
+  [cargo]
+  (reduce #(if (empty? %2) (str %1 " ") (str %1 (first %2)))
+          "" cargo))
+
+(defn update-cargo
+  [line cargo]
+  (let [regex (re-find #"move (\d+) from (\d+) to (\d+)" line)
+        [amount from to] (map #(Integer/parseInt %) (rest regex))
+        crates-to-move (apply vector (reverse (take amount (nth cargo (dec from)))))]
+    (-> cargo
+        (update (dec from) #(drop amount %))
+        (update (dec to) #(apply conj crates-to-move %)))))
+
+(defn part-one
+  []
+  (let [input (read-input)
+        cargo (txt->cargo (first input))]
+    (display-top-crates (reduce #(update-cargo %2 %1) cargo (s/split (second input) #"\n")))))
