@@ -23,13 +23,13 @@ fn part_one() {
     if let Ok(lines) = read_lines("input.txt") {
         for line in lines.flatten() {
             let split: Vec<&str> = line.split(' ').collect();
-            let player: RPS = match split[0] {
+            let opponent: RPS = match split[0] {
                 "A" => RPS::Rock,
                 "B" => RPS::Paper,
                 "C" => RPS::Scissors,
                 &_ => panic!("Invalid player choice"),
             };
-            let opponent: RPS = match split[1] {
+            let player: RPS = match split[1] {
                 "X" => RPS::Rock,
                 "Y" => RPS::Paper,
                 "Z" => RPS::Scissors,
