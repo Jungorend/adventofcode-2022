@@ -16,6 +16,7 @@ enum RPS {
 
 fn main() {
     part_one();
+    part_two();
 }
 
 fn part_one() {
@@ -27,18 +28,61 @@ fn part_one() {
                 "A" => RPS::Rock,
                 "B" => RPS::Paper,
                 "C" => RPS::Scissors,
-                &_ => panic!("Invalid player choice"),
+                &_ => panic!("Invalid opponent choice"),
             };
             let player: RPS = match split[1] {
                 "X" => RPS::Rock,
                 "Y" => RPS::Paper,
                 "Z" => RPS::Scissors,
-                &_ => panic!("Illegal opponent choice"),
+                &_ => panic!("Illegal player choice"),
             };
             score += calculate_points(player, opponent);
         }
     }
     println!("{score}");
+}
+
+fn part_two() {
+    let mut score: i32 = 0;
+    if let Ok(lines) = read_lines("input.txt") {
+        for line in lines.flatten() {
+            let split: Vec<&str> = line.split(' ').collect();
+            let opponent: RPS = match split[0] {
+                "A" => RPS::Rock,
+                "B" => RPS::Paper,
+                "C" => RPS::Scissors,
+                &_ => panic!("Invalid opponent choice"),
+            };
+            let match_result: MatchResult = match split[1] {
+                "X" => MatchResult::Lose,
+                "Y" => MatchResult::Draw,
+                "Z" => MatchResult::Win,
+                &_ => panic!("Invalid match result"),
+            };
+            score += calculate_points(calculate_player(&opponent, match_result), opponent);
+        }
+    }
+    println!("{score}");
+}
+
+fn calculate_player(opponent: &RPS, result: MatchResult) -> RPS {
+    match opponent {
+        RPS::Rock => match result {
+            MatchResult::Draw => RPS::Rock,
+            MatchResult::Win => RPS::Paper,
+            MatchResult::Lose => RPS::Scissors,
+        },
+        RPS::Scissors => match result {
+            MatchResult::Draw => RPS::Scissors,
+            MatchResult::Win => RPS::Rock,
+            MatchResult::Lose => RPS::Paper,
+        },
+        RPS::Paper => match result {
+            MatchResult::Draw => RPS::Paper,
+            MatchResult::Win => RPS::Scissors,
+            MatchResult::Lose => RPS::Rock,
+        }
+    }
 }
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
